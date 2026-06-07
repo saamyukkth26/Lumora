@@ -2,6 +2,7 @@
 import { Cpu, Zap, Wifi, WifiOff } from 'lucide-react'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useChatStore } from '@/stores/chatStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 const VIEW_META: Record<string, { label: string; emoji: string; color: string }> = {
   chat:      { label: 'Ask Lumora',       emoji: '💬', color: '#10b981' },
@@ -15,6 +16,7 @@ const VIEW_META: Record<string, { label: string; emoji: string; color: string }>
 export function TopBar() {
   const { selectedModel, anthropicKey, openaiKey, googleKey } = useSettingsStore()
   const { activeView } = useChatStore()
+  const isMobile = useIsMobile()
   const hasKey = !!(anthropicKey || openaiKey || googleKey)
   const meta = VIEW_META[activeView] || VIEW_META.chat
 
@@ -53,29 +55,31 @@ export function TopBar() {
       </AnimatePresence>
 
       {/* Right: badges */}
-      <div className="flex items-center gap-2">
-        {/* Model badge */}
-        <motion.div
-          whileHover={{ scale: 1.04 }}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-none text-xs font-medium"
-          style={{
-            background: 'rgba(16,185,129,0.08)',
-            border: '1px solid rgba(16,185,129,0.2)',
-            color: '#6ee7b7',
-          }}
-        >
-          <Cpu size={10} />
-          <span>
-            {selectedModel.includes('gemini') ? selectedModel.replace('gemini-','Gemini ') :
-             selectedModel.includes('gpt') ? selectedModel.toUpperCase() :
-             selectedModel.split('-').slice(0,3).join('-')}
-          </span>
-        </motion.div>
+      <div className="flex items-center gap-1.5">
+        {/* Model badge — hidden on mobile */}
+        {!isMobile && (
+          <motion.div
+            whileHover={{ scale: 1.04 }}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-none text-xs font-medium"
+            style={{
+              background: 'rgba(16,185,129,0.08)',
+              border: '1px solid rgba(16,185,129,0.2)',
+              color: '#6ee7b7',
+            }}
+          >
+            <Cpu size={10} />
+            <span>
+              {selectedModel.includes('gemini') ? selectedModel.replace('gemini-','Gemini ') :
+               selectedModel.includes('gpt') ? selectedModel.toUpperCase() :
+               selectedModel.split('-').slice(0,3).join('-')}
+            </span>
+          </motion.div>
+        )}
 
         {/* Connection status */}
         <motion.div
           whileHover={{ scale: 1.04 }}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-none text-xs font-medium"
+          className="flex items-center gap-1.5 px-2 py-1 rounded-none text-xs font-medium"
           style={{
             background: hasKey ? 'rgba(16,185,129,0.08)' : 'rgba(245,158,11,0.08)',
             border: hasKey ? '1px solid rgba(16,185,129,0.25)' : '1px solid rgba(245,158,11,0.25)',
@@ -95,7 +99,7 @@ export function TopBar() {
         {/* Lumora brand */}
         <motion.div
           whileHover={{ scale: 1.04 }}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-none text-xs font-bold"
+          className="flex items-center gap-1.5 px-2 py-1 rounded-none text-xs font-bold"
           style={{
             background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(20,184,166,0.15))',
             border: '1px solid rgba(16,185,129,0.3)',

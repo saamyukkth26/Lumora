@@ -25,12 +25,12 @@ function WelcomeScreen({ onSuggest }: { onSuggest: (text: string) => void }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="flex flex-col items-center justify-center text-center px-6 py-4 select-none"
+      className="flex flex-col items-center justify-center text-center px-4 py-4 select-none w-full"
     >
-      {/* Animated logo — self-contained 140px box, no overflow */}
+      {/* Animated logo — self-contained 120px box on mobile, 140px on desktop */}
       <motion.div
-        className="relative flex items-center justify-center mb-5 flex-shrink-0"
-        style={{ width: 140, height: 140 }}
+        className="relative flex items-center justify-center mb-4 flex-shrink-0"
+        style={{ width: 120, height: 120 }}
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 18, delay: 0.1 }}
@@ -45,7 +45,7 @@ function WelcomeScreen({ onSuggest }: { onSuggest: (text: string) => void }) {
         {/* Rotating dashed orbit ring — sized to fit inside 140px box */}
         <motion.div
           className="absolute"
-          style={{ width: 118, height: 118, border: '1px dashed rgba(16,185,129,0.28)' }}
+          style={{ width: 100, height: 100, border: '1px dashed rgba(16,185,129,0.28)' }}
           animate={{ rotate: 360 }}
           transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
         >
@@ -57,7 +57,7 @@ function WelcomeScreen({ onSuggest }: { onSuggest: (text: string) => void }) {
         {/* Counter-rotating inner ring */}
         <motion.div
           className="absolute"
-          style={{ width: 92, height: 92, border: '1px solid rgba(6,182,212,0.2)' }}
+          style={{ width: 76, height: 76, border: '1px solid rgba(6,182,212,0.2)' }}
           animate={{ rotate: -360 }}
           transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
         >
@@ -103,7 +103,7 @@ function WelcomeScreen({ onSuggest }: { onSuggest: (text: string) => void }) {
 
       {/* Suggestion cards */}
       <motion.div
-        className="grid grid-cols-2 gap-2 w-full max-w-md"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-sm sm:max-w-md"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.5 }}
@@ -119,7 +119,7 @@ function WelcomeScreen({ onSuggest }: { onSuggest: (text: string) => void }) {
               transition={{ delay: 0.65 + i * 0.08 }}
               whileHover={{ y: -3, scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              className="flex flex-col items-start gap-2 p-3.5 rounded-none text-left transition-all duration-200"
+              className="flex flex-row sm:flex-col items-center sm:items-start gap-2.5 sm:gap-2 p-3 sm:p-3.5 rounded-none text-left transition-all duration-200"
               style={{
                 background: 'rgba(255,255,255,0.02)',
                 border: '1px solid rgba(255,255,255,0.06)',

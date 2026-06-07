@@ -1,5 +1,6 @@
-﻿import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Sidebar } from './Sidebar'
+import { BottomNav } from './BottomNav'
 import { TopBar } from './TopBar'
 import { ChatPanel } from '@/components/chat/ChatPanel'
 import { KnowledgeGraph } from '@/components/knowledge-graph/KnowledgeGraph'
@@ -8,6 +9,7 @@ import { ResearchPanel } from '@/components/research/ResearchPanel'
 import { TimelineView } from '@/components/timeline/TimelineView'
 import { SettingsPanel } from '@/components/settings/SettingsPanel'
 import { useChatStore } from '@/stores/chatStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 const VIEWS: Record<string, React.ComponentType> = {
   chat: ChatPanel,
@@ -20,6 +22,7 @@ const VIEWS: Record<string, React.ComponentType> = {
 
 export function AppShell() {
   const { activeView } = useChatStore()
+  const isMobile = useIsMobile()
   const CurrentView = VIEWS[activeView] || ChatPanel
 
   return (
@@ -37,11 +40,12 @@ export function AppShell() {
 
       {/* Content */}
       <div className="relative z-10 flex w-full h-full">
-        <Sidebar />
+        {/* Desktop sidebar */}
+        {!isMobile && <Sidebar />}
 
         <div className="flex flex-col flex-1 min-w-0">
           <TopBar />
-          <main className="flex-1 overflow-hidden relative">
+          <main className="flex-1 overflow-hidden relative" style={{ paddingBottom: isMobile ? 64 : 0 }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeView}
@@ -50,11 +54,15 @@ export function AppShell() {
                 exit={{ opacity: 0, x: -8, filter: 'blur(4px)' }}
                 transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                 className="absolute inset-0"
+                style={{ bottom: 0 }}
               >
                 <CurrentView />
               </motion.div>
             </AnimatePresence>
           </main>
+
+          {/* Mobile bottom nav */}
+          {isMobile && <BottomNav />}
         </div>
       </div>
     </div>
