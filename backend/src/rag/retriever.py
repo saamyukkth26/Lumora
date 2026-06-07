@@ -1,6 +1,5 @@
 from __future__ import annotations
 from src.rag import store as lancestore
-from src.rag.embedder import AzureEmbedder
 from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -29,8 +28,16 @@ def _rrf_fusion(
     return [all_docs[cid] for cid, _ in ranked[:top_n]]
 
 
+def _get_embedder():
+    from src.rag.embedder import GeminiEmbedder, AzureEmbedder
+    try:
+        return GeminiEmbedder.get_instance()
+    except RuntimeError:
+        return AzureEmbedder.get_instance()
+
+
 async def hybrid_search(query: str, top_k: int = 20) -> list[dict]:
-    embedder = AzureEmbedder.get_instance()
+    embedder = _get_embedder()
     results = await embedder.encode_async([query])
     query_vec = results[0].dense
 
