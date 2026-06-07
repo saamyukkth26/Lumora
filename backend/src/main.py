@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
             )
             # Update LanceDB dim for Gemini (768-d)
             settings.__dict__['embedding_dim'] = 768
-            logger.info("Gemini embedder initialized (768-d)")
+            logger.info("Gemini embedder initialized (3072-d)")
         except Exception as e:
             logger.warning(f"Gemini embedder init failed: {e}")
 

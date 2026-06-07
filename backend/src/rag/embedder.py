@@ -83,11 +83,11 @@ class GeminiEmbedder:
 
     _instance: ClassVar["GeminiEmbedder | None"] = None
 
-    def __init__(self, api_key: str, model: str = "models/text-embedding-004") -> None:
+    def __init__(self, api_key: str, model: str = "models/gemini-embedding-001") -> None:
         self.api_key = api_key
         self.model = model
         self._client = None
-        self.embedding_dim = 768
+        self.embedding_dim = 3072  # gemini-embedding-001 default output dim
 
     @classmethod
     def get_instance(cls) -> "GeminiEmbedder":
@@ -96,7 +96,7 @@ class GeminiEmbedder:
         return cls._instance
 
     @classmethod
-    def init(cls, api_key: str, model: str = "models/text-embedding-004") -> "GeminiEmbedder":
+    def init(cls, api_key: str, model: str = "models/gemini-embedding-001") -> "GeminiEmbedder":
         cls._instance = cls(api_key, model)
         cls._instance.load()
         return cls._instance
