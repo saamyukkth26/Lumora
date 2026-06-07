@@ -19,20 +19,32 @@ export function DocumentPanel() {
 
   useEffect(() => { load() }, [load])
 
-  // Poll processing docs
+  // Poll processing docs — stop on 404 (backend restart wiped registry) or after 2 min
   useEffect(() => {
     const processing = documents.filter((d) => d.status === 'processing')
     if (!processing.length) return
+    const startTimes: Record<string, number> = {}
+    processing.forEach((d) => { startTimes[d.doc_id] = Date.now() })
     const timer = setInterval(async () => {
       for (const doc of processing) {
+        const elapsed = Date.now() - (startTimes[doc.doc_id] || 0)
+        if (elapsed > 120_000) {
+          updateDocument(doc.doc_id, { status: 'failed', chunk_count: 0 })
+          continue
+        }
         try {
           const status = await getDocumentStatus(doc.doc_id) as { status: string; chunk_count: number }
           if (status.status !== 'processing') {
             updateDocument(doc.doc_id, { status: status.status as 'ready' | 'failed', chunk_count: status.chunk_count })
           }
-        } catch { /* silent */ }
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : String(e)
+          if (msg.includes('404') || msg.includes('Not Found')) {
+            updateDocument(doc.doc_id, { status: 'failed', chunk_count: 0 })
+          }
+        }
       }
-    }, 2000)
+    }, 3000)
     return () => clearInterval(timer)
   }, [documents, updateDocument])
 
