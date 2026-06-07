@@ -54,7 +54,7 @@ export function ResearchPanel() {
   }
 
   return (
-    <div className="h-full overflow-y-auto flex flex-col p-4 gap-4" style={{ minHeight: 'calc(100vh - 52px)', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+    <div className="overflow-y-auto flex flex-col p-4 gap-4" style={{ minHeight: 'calc(100vh - 52px)', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
       {/* Input card */}
       <motion.div
         animate={{

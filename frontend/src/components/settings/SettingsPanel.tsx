@@ -85,7 +85,7 @@ export function SettingsPanel() {
   } = useSettingsStore()
 
   return (
-    <div className="h-full overflow-y-auto p-6" style={{ minHeight: 'calc(100vh - 52px)', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+    <div className="overflow-y-auto p-6" style={{ minHeight: 'calc(100vh - 52px)', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
       <div className="max-w-xl mx-auto space-y-6">
 
         {/* API Keys */}
