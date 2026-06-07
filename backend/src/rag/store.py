@@ -7,17 +7,34 @@ from src.rag.chunker import Chunk
 
 logger = get_logger(__name__)
 
-CHUNKS_SCHEMA = pa.schema([
-    pa.field("chunk_id", pa.string()),
-    pa.field("doc_id", pa.string()),
-    pa.field("text", pa.string()),
-    pa.field("source", pa.string()),
-    pa.field("title", pa.string()),
-    pa.field("file_type", pa.string()),
-    pa.field("chunk_index", pa.int32()),
-    pa.field("ingested_at", pa.timestamp("ms")),
-    pa.field("vector", pa.list_(pa.float32(), 1536)),  # text-embedding-ada-002
-])
+
+def _get_embedding_dim() -> int:
+    try:
+        from src.rag.embedder import GeminiEmbedder
+        return GeminiEmbedder.get_instance().embedding_dim
+    except RuntimeError:
+        pass
+    try:
+        from src.rag.embedder import AzureEmbedder
+        return AzureEmbedder.get_instance().embedding_dim
+    except RuntimeError:
+        pass
+    return 1536
+
+
+def _make_schema(dim: int) -> pa.Schema:
+    return pa.schema([
+        pa.field("chunk_id", pa.string()),
+        pa.field("doc_id", pa.string()),
+        pa.field("text", pa.string()),
+        pa.field("source", pa.string()),
+        pa.field("title", pa.string()),
+        pa.field("file_type", pa.string()),
+        pa.field("chunk_index", pa.int32()),
+        pa.field("ingested_at", pa.timestamp("ms")),
+        pa.field("vector", pa.list_(pa.float32(), dim)),
+    ])
+
 
 TABLE_NAME = "chunks"
 _db: lancedb.DBConnection | None = None
@@ -43,15 +60,31 @@ async def init_store(db_path: str) -> None:
     global _db, _table, _row_count
     Path(db_path).mkdir(parents=True, exist_ok=True)
     _db = lancedb.connect(db_path)
+
+    dim = _get_embedding_dim()
+    schema = _make_schema(dim)
+
     table_names = _db.table_names()
     if TABLE_NAME in table_names:
-        _table = _db.open_table(TABLE_NAME)
-        _row_count = _table.count_rows()
-        logger.info(f"Opened existing LanceDB table '{TABLE_NAME}' with {_row_count} rows")
+        existing = _db.open_table(TABLE_NAME)
+        # Check if vector dimension matches — if not, drop and recreate
+        existing_schema = existing.schema
+        vector_field = existing_schema.field("vector") if "vector" in existing_schema.names else None
+        existing_dim = vector_field.type.list_size if vector_field else None
+        if existing_dim != dim:
+            logger.warning(f"Vector dim mismatch (existing={existing_dim}, required={dim}). Dropping table.")
+            _db.drop_table(TABLE_NAME)
+            _table = _db.create_table(TABLE_NAME, schema=schema)
+            _row_count = 0
+            logger.info(f"Recreated LanceDB table '{TABLE_NAME}' with dim={dim}")
+        else:
+            _table = existing
+            _row_count = _table.count_rows()
+            logger.info(f"Opened existing LanceDB table '{TABLE_NAME}' with {_row_count} rows (dim={dim})")
     else:
-        _table = _db.create_table(TABLE_NAME, schema=CHUNKS_SCHEMA)
+        _table = _db.create_table(TABLE_NAME, schema=schema)
         _row_count = 0
-        logger.info(f"Created new LanceDB table '{TABLE_NAME}'")
+        logger.info(f"Created new LanceDB table '{TABLE_NAME}' with dim={dim}")
 
 
 async def upsert_chunks(chunks: list[Chunk], vectors: list[list[float]]) -> None:
