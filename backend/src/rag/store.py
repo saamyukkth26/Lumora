@@ -155,6 +155,8 @@ async def get_chunk_count_by_doc(doc_id: str) -> int:
 
 async def vector_search(query_vec: list[float], top_k: int = 20) -> list[dict]:
     table = get_table()
+    if table.count_rows() == 0:
+        return []
     results = (
         table.search(query_vec, query_type="vector")
         .limit(top_k)
