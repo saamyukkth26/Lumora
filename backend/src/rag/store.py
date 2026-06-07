@@ -58,7 +58,15 @@ def get_table():
 
 async def init_store(db_path: str) -> None:
     global _db, _table, _row_count
+    import os, shutil
     Path(db_path).mkdir(parents=True, exist_ok=True)
+
+    # Allow wiping stale data via env var (set once, then remove)
+    if os.environ.get("RESET_LANCEDB", "").lower() in ("1", "true", "yes"):
+        shutil.rmtree(db_path, ignore_errors=True)
+        Path(db_path).mkdir(parents=True, exist_ok=True)
+        logger.warning("RESET_LANCEDB=true — wiped LanceDB data directory")
+
     _db = lancedb.connect(db_path)
 
     dim = _get_embedding_dim()
@@ -67,10 +75,21 @@ async def init_store(db_path: str) -> None:
     table_names = _db.table_names()
     if TABLE_NAME in table_names:
         existing = _db.open_table(TABLE_NAME)
-        # Check if vector dimension matches — if not, drop and recreate
-        existing_schema = existing.schema
-        vector_field = existing_schema.field("vector") if "vector" in existing_schema.names else None
-        existing_dim = vector_field.type.list_size if vector_field else None
+        # Check vector dimension — drop and recreate if mismatch
+        try:
+            existing_schema = existing.schema
+            vector_field = next(
+                (existing_schema.field(name) for name in existing_schema.names if name == "vector"),
+                None,
+            )
+            # list_size may be an attribute or accessible via pa type inspection
+            existing_dim = None
+            if vector_field is not None:
+                t = vector_field.type
+                existing_dim = getattr(t, "list_size", None) or getattr(t, "value_type", None) and t.list_size
+        except Exception:
+            existing_dim = None
+
         if existing_dim != dim:
             logger.warning(f"Vector dim mismatch (existing={existing_dim}, required={dim}). Dropping table.")
             _db.drop_table(TABLE_NAME)
