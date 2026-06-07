@@ -54,9 +54,11 @@ export function AppShell() {
                 exit={{ opacity: 0, x: -8, filter: 'blur(4px)' }}
                 transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                 className="absolute inset-0"
-                style={{ bottom: isMobile ? 64 : 0 }}
+                style={{ bottom: isMobile ? 64 : 0, overflowY: activeView === 'chat' || activeView === 'graph' ? 'hidden' : 'auto', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
               >
-                <CurrentView />
+                <div style={{ minHeight: activeView !== 'chat' && activeView !== 'graph' ? 'calc(100vh - 52px)' : undefined }}>
+                  <CurrentView />
+                </div>
               </motion.div>
             </AnimatePresence>
           </main>
