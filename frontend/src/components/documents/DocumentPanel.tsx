@@ -98,10 +98,10 @@ export function DocumentPanel() {
   }
 
   return (
-    <div className="h-full flex flex-col p-4 gap-4 overflow-hidden">
+    <div className="h-full overflow-y-auto flex flex-col p-4 gap-4" style={{ minHeight: 'calc(100vh - 52px)', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
       <UploadDropzone onUploadFile={handleUploadFile} onUploadUrl={handleUploadUrl} uploading={uploading} />
 
-      <div className="flex-1 overflow-y-auto space-y-2">
+      <div className="flex-1 space-y-2">
         {documents.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 12 }}

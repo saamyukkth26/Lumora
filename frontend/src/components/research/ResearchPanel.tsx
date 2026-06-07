@@ -54,7 +54,7 @@ export function ResearchPanel() {
   }
 
   return (
-    <div className="h-full flex flex-col p-4 gap-4 overflow-hidden">
+    <div className="h-full overflow-y-auto flex flex-col p-4 gap-4" style={{ minHeight: 'calc(100vh - 52px)', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
       {/* Input card */}
       <motion.div
         animate={{
@@ -140,7 +140,7 @@ export function ResearchPanel() {
       </motion.div>
 
       {/* Jobs */}
-      <div className="flex-1 overflow-y-auto space-y-3 min-h-0">
+      <div className="flex-1 space-y-3">
         <AnimatePresence>
           {jobs.map((job) => (
             <ResearchJobCard key={job.job_id} job={job} onDelete={handleDelete} />
