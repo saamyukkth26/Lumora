@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from src.rag.ingestion import load_document, RawDocument
 from src.rag.chunker import chunk_document, Chunk
-from src.rag.embedder import AzureEmbedder
+from src.rag.retriever import _get_embedder
 from src.rag.reranker import BGEReranker, RankedChunk
 from src.rag import store as lancestore
 from src.rag.retriever import hybrid_search
@@ -62,7 +62,7 @@ async def ingest_document(source: str, file_type: str | None = None) -> str:
 async def _process_document(doc_id: str, raw_doc: RawDocument) -> None:
     try:
         chunks = chunk_document(doc_id, raw_doc.content, raw_doc.metadata)
-        embedder = AzureEmbedder.get_instance()
+        embedder = _get_embedder()
         texts = [c.text_for_embedding for c in chunks]
         embedding_results = await embedder.encode_async(texts)
         vectors = [r.dense for r in embedding_results]
