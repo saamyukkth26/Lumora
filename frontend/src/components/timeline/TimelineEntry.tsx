@@ -1,7 +1,6 @@
 ﻿import { motion } from 'framer-motion'
 import { FileText, Search, MessageSquare } from 'lucide-react'
 import type { TimelineEvent } from '@/types'
-import { useChatStore } from '@/stores/chatStore'
 
 interface Props {
   event: TimelineEvent

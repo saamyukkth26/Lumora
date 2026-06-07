@@ -14,7 +14,7 @@ const VIEW_META: Record<string, { label: string; emoji: string; color: string }>
 
 export function TopBar() {
   const { selectedModel, anthropicKey, openaiKey } = useSettingsStore()
-  const { activeView, currentAgentStep } = useChatStore()
+  const { activeView } = useChatStore()
   const hasKey = !!(anthropicKey || openaiKey)
   const meta = VIEW_META[activeView] || VIEW_META.chat
 

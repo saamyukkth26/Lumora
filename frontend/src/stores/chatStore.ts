@@ -22,7 +22,7 @@ interface ChatStore {
   setActiveView: (view: string) => void
 }
 
-export const useChatStore = create<ChatStore>((set, get) => ({
+export const useChatStore = create<ChatStore>((set) => ({
   sessions: {},
   activeSessionId: '',
   streamingMessageId: null,

@@ -1,6 +1,6 @@
 import type { Node, Edge } from '@xyflow/react'
 
-export function applyDagreLayout(nodes: Node[], edges: Edge[]): Node[] {
+export function applyDagreLayout(nodes: Node[], _edges: Edge[]): Node[] {
   // Simple force-directed layout without dagre dependency
   // Arrange nodes in a circular/grid pattern
   const COLS = Math.ceil(Math.sqrt(nodes.length))

@@ -1,8 +1,7 @@
 ﻿import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle, Loader2, AlertCircle, Clock, ChevronDown, ExternalLink } from 'lucide-react'
+import { CheckCircle, Loader2, AlertCircle, Clock, ChevronDown } from 'lucide-react'
 import type { ResearchJob } from '@/types'
 import { useState } from 'react'
-import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 
 interface Props {
@@ -10,7 +9,7 @@ interface Props {
   onDelete: (id: string) => void
 }
 
-export function ResearchJobCard({ job, onDelete }: Props) {
+export function ResearchJobCard({ job }: Props) {
   const [expanded, setExpanded] = useState(false)
 
   const statusIcon = {

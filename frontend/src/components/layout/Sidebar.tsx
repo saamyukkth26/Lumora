@@ -1,7 +1,6 @@
 ﻿import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, Network, FileText, Search, Clock, Settings, ChevronRight, Layers } from 'lucide-react'
 import { useChatStore } from '@/stores/chatStore'
-import { cn } from '@/lib/utils'
 import { useState } from 'react'
 
 const NAV_ITEMS = [

@@ -8,7 +8,7 @@ import { createResearchJob, fetchResearchJobs, fetchResearchJob, deleteResearchJ
 import { useSettingsStore } from '@/stores/settingsStore'
 
 export function ResearchPanel() {
-  const { jobs, setJobs, addJob, updateJob, removeJob } = useResearchStore()
+  const { jobs, addJob, updateJob, removeJob } = useResearchStore()
   const { anthropicKey, openaiKey } = useSettingsStore()
   const [query, setQuery] = useState('')
   const [depth, setDepth] = useState(2)
@@ -16,6 +16,7 @@ export function ResearchPanel() {
   const [focused, setFocused] = useState(false)
   const pollRef = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map())
 
+  const { setJobs } = useResearchStore()
   const load = useCallback(async () => {
     try { const j = await fetchResearchJobs(); setJobs(j) } catch { /* silent */ }
   }, [setJobs])
@@ -92,8 +93,8 @@ export function ResearchPanel() {
           <textarea
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
+            onFocus={(e) => { setFocused(true); (e.target as HTMLTextAreaElement).style.borderColor = 'rgba(16,185,129,0.35)' }}
+            onBlur={(e) => { setFocused(false); (e.target as HTMLTextAreaElement).style.borderColor = 'rgba(255,255,255,0.06)' }}
             placeholder="What topic should Lumora investigate deeply?"
             rows={3}
             className="w-full rounded-none px-3 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 outline-none resize-none transition-all"
@@ -101,8 +102,6 @@ export function ResearchPanel() {
               background: 'rgba(255,255,255,0.03)',
               border: '1px solid rgba(255,255,255,0.06)',
             }}
-            onFocus={e => (e.target as HTMLTextAreaElement).style.borderColor = 'rgba(16,185,129,0.35)'}
-            onBlur={e => (e.target as HTMLTextAreaElement).style.borderColor = 'rgba(255,255,255,0.06)'}
           />
         </div>
 

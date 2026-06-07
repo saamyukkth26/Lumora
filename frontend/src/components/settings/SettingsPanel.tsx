@@ -1,17 +1,16 @@
 ﻿import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Key, Server, Cpu, CheckCircle, AlertCircle, Loader2, Trash2, Eye, EyeOff } from 'lucide-react'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { MODELS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { apiFetch } from '@/api/client'
 
-function ApiKeyInput({ label, value, onChange, placeholder, testEndpoint }: {
+function ApiKeyInput({ label, value, onChange, placeholder }: {
   label: string
   value: string
   onChange: (v: string) => void
   placeholder: string
-  testEndpoint?: string
 }) {
   const [show, setShow] = useState(false)
   const [testing, setTesting] = useState(false)
