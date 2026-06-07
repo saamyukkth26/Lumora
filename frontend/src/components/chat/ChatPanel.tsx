@@ -248,19 +248,18 @@ export function ChatPanel() {
   }, [sessionId, anthropicKey, openaiKey, backendUrl, addUserMessage, addAssistantPlaceholder, appendStreamingDelta, finalizeStream, setAgentStep])
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      {/* Messages area */}
+    <div className="flex flex-col h-full">
+      {/* Scrollable area — welcome screen + messages */}
       <div
-        className="flex-1 overflow-x-hidden flex flex-col items-center"
-        style={{ minHeight: 0, overflowY: messages.length === 0 ? 'hidden' : 'auto' }}
+        className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col items-center"
+        style={{ minHeight: 0, WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
       >
-        <div className="w-full" style={{ maxWidth: 760, padding: '0 24px' }}>
+        <div className="w-full flex flex-col" style={{ maxWidth: 760, padding: '0 16px', minHeight: '100%' }}>
           <AnimatePresence mode="wait">
             {messages.length === 0 ? (
               <motion.div
                 key="welcome"
-                className="flex items-center justify-center"
-                style={{ minHeight: 'calc(100% - 80px)' }}
+                className="flex-1 flex items-center justify-center py-8"
               >
                 <WelcomeScreen onSuggest={handleSend} />
               </motion.div>
@@ -276,16 +275,16 @@ export function ChatPanel() {
         </div>
       </div>
 
-      {/* Agent status */}
-      <AgentStatusBar step={isStreaming ? currentAgentStep : null} />
-
-      {/* Input */}
-      <ChatInput
-        onSend={handleSend}
-        isStreaming={isStreaming}
-        onCancel={() => abortRef.current?.abort()}
-        disabled={false}
-      />
+      {/* Agent status + input — always pinned at bottom */}
+      <div className="flex-shrink-0">
+        <AgentStatusBar step={isStreaming ? currentAgentStep : null} />
+        <ChatInput
+          onSend={handleSend}
+          isStreaming={isStreaming}
+          onCancel={() => abortRef.current?.abort()}
+          disabled={false}
+        />
+      </div>
     </div>
   )
 }

@@ -21,8 +21,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  overscroll-behavior: none;
 }
-#root { height: 100%; }
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* iOS momentum scrolling for scroll containers */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
 
 /* ── Aurora background — emerald/cyan palette ───────────── */
 .aurora-bg {
