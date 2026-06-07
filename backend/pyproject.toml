@@ -1,0 +1,73 @@
+[project]
+name = "lumora-backend"
+version = "1.0.0"
+description = "Lumora - Personal Second Brain with Autonomous Research Agents"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.8.0",
+    "pydantic-settings>=2.4.0",
+    # LangGraph + LangChain
+    "langgraph>=0.2.0",
+    "langchain>=0.3.0",
+    "langchain-anthropic>=0.2.0",
+    "langchain-openai>=0.2.0",
+    "langchain-community>=0.3.0",
+    # Vector DB
+    "lancedb>=0.13.0",
+    "pyarrow>=17.0.0",
+    # Embeddings (Azure OpenAI Ada-002 — no local model download needed)
+    "openai>=1.40.0",
+    # Document processing
+    "pymupdf>=1.24.0",
+    "python-docx>=1.1.0",
+    "httpx>=0.27.0",
+    "beautifulsoup4>=4.12.0",
+    # MCP servers
+    "mcp[cli]>=1.0.0",
+    "duckduckgo-search>=6.0.0",
+    "arxiv>=2.1.0",
+    "wikipedia-api>=0.7.0",
+    # Knowledge graph
+    "neo4j>=5.24.0",
+    "networkx>=3.3",
+    # Utilities
+    "python-multipart>=0.0.9",
+    "structlog>=24.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.27.0",
+    "pytest-mock>=3.14.0",
+    "black>=24.0.0",
+    "isort>=5.13.0",
+    "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

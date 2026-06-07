@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: lumora-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: AZURE_OPENAI_API_KEY
+        sync: false
+      - key: AZURE_OPENAI_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_API_VERSION
+        value: "2024-12-01-preview"
+      - key: AZURE_OPENAI_DEPLOYMENT
+        value: "gpt-4o-mini"
+      - key: AZURE_OPENAI_EMB_API_KEY
+        sync: false
+      - key: AZURE_OPENAI_EMB_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_EMB_API_VERSION
+        value: "2025-01-01-preview"
+      - key: AZURE_OPENAI_EMB_DEPLOYMENT
+        value: "text-embedding-ada-002"
+      - key: NEO4J_URI
+        sync: false
+      - key: NEO4J_USERNAME
+        value: neo4j
+      - key: NEO4J_PASSWORD
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: "https://lumora.vercel.app"
+      - key: LANCEDB_PATH
+        value: "/data/lancedb"
+      - key: FILESYSTEM_BASE_DIR
+        value: "/data/uploads"
+    disk:
+      name: lumora-data
+      mountPath: /data
+      sizeGB: 1
