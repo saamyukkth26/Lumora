@@ -260,7 +260,7 @@ export function ChatPanel() {
               <motion.div
                 key="welcome"
                 className="flex items-center justify-center"
-                style={{ minHeight: 'calc(100vh - 180px)' }}
+                style={{ minHeight: 'calc(100% - 80px)' }}
               >
                 <WelcomeScreen onSuggest={handleSend} />
               </motion.div>

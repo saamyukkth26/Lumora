@@ -45,7 +45,7 @@ export function AppShell() {
 
         <div className="flex flex-col flex-1 min-w-0">
           <TopBar />
-          <main className="flex-1 overflow-hidden relative" style={{ paddingBottom: isMobile ? 64 : 0 }}>
+          <main className="flex-1 overflow-hidden relative">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeView}
@@ -54,7 +54,7 @@ export function AppShell() {
                 exit={{ opacity: 0, x: -8, filter: 'blur(4px)' }}
                 transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                 className="absolute inset-0"
-                style={{ bottom: 0 }}
+                style={{ bottom: isMobile ? 64 : 0 }}
               >
                 <CurrentView />
               </motion.div>

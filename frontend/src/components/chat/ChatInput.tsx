@@ -39,7 +39,7 @@ export function ChatInput({ onSend, isStreaming, onCancel, disabled }: Props) {
   }
 
   return (
-    <div className="pb-5 pt-1 flex flex-col items-center px-6">
+    <div className="pb-3 pt-1 flex flex-col items-center px-4 sm:px-6" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
       <motion.div
         className="w-full"
         style={{ maxWidth: 760 }}
