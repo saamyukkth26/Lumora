@@ -55,7 +55,7 @@ def get_llm_from_keys(
     """Per-request LLM override. Falls back to server-side config."""
     if google_key:
         from langchain_google_genai import ChatGoogleGenerativeAI
-        gemini_model = model if model.startswith("gemini") else "gemini-1.5-flash"
+        gemini_model = model if model.startswith("gemini") else "gemini-2.5-flash"
         return ChatGoogleGenerativeAI(
             model=gemini_model,
             google_api_key=google_key,
