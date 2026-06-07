@@ -10,7 +10,7 @@ interface GraphNodeData {
   [key: string]: unknown
 }
 
-const TYPE_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
+const TYPE_ICONS: Record<string, React.ComponentType<{ size?: number; style?: React.CSSProperties }>> = {
   person:       User,
   organization: Building,
   concept:      Tag,
