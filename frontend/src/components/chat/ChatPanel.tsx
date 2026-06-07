@@ -259,7 +259,8 @@ export function ChatPanel() {
             {messages.length === 0 ? (
               <motion.div
                 key="welcome"
-                className="flex-1 flex items-center justify-center py-8"
+                className="flex items-center justify-center py-8"
+                style={{ minHeight: 'calc(100vh - 80px)' }}
               >
                 <WelcomeScreen onSuggest={handleSend} />
               </motion.div>
