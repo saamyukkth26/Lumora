@@ -20,7 +20,7 @@ export const useSettingsStore = create<SettingsStore>()(
       anthropicKey: '',
       openaiKey: '',
       googleKey: '',
-      selectedModel: 'gemini-1.5-flash',
+      selectedModel: 'gemini-2.5-flash',
       backendUrl: '/api/v1',
       setAnthropicKey: (key) => set({ anthropicKey: key }),
       setOpenaiKey: (key) => set({ openaiKey: key }),

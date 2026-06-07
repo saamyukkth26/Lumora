@@ -19,8 +19,8 @@ class Settings(BaseSettings):
 
     # ── Google Gemini (free tier) ─────────────────────────
     google_api_key: str = ""
-    google_gemini_model: str = "gemini-1.5-flash"
-    google_embedding_model: str = "models/text-embedding-004"
+    google_gemini_model: str = "gemini-2.5-flash"
+    google_embedding_model: str = "gemini-embedding-001"
 
     # ── Fallback: direct OpenAI / Anthropic (optional) ───
     anthropic_api_key: str = ""
