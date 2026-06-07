@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir \
         fastapi "uvicorn[standard]" pydantic pydantic-settings \
         langgraph langchain langchain-anthropic langchain-openai langchain-google-genai langchain-community \
         google-generativeai \
-        lancedb pyarrow \
+        lancedb pyarrow pandas \
         openai \
         pymupdf python-docx httpx beautifulsoup4 \
         "mcp[cli]" duckduckgo-search arxiv wikipedia-api \
