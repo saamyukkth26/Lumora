@@ -1,10 +1,12 @@
 export const API_BASE = import.meta.env.VITE_API_URL || '/api/v1'
 
 export const MODELS = [
-  { id: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6', provider: 'anthropic' },
-  { id: 'claude-opus-4-8', label: 'Claude Opus 4.8', provider: 'anthropic' },
-  { id: 'gpt-4o', label: 'GPT-4o', provider: 'openai' },
-  { id: 'gpt-4o-mini', label: 'GPT-4o Mini', provider: 'openai' },
+  { id: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash', provider: 'google', free: true },
+  { id: 'gemini-1.5-pro',   label: 'Gemini 1.5 Pro',   provider: 'google', free: true },
+  { id: 'gpt-4o-mini',      label: 'GPT-4o Mini',       provider: 'openai', free: false },
+  { id: 'gpt-4o',           label: 'GPT-4o',            provider: 'openai', free: false },
+  { id: 'claude-sonnet-4-6',label: 'Claude Sonnet 4.6', provider: 'anthropic', free: false },
+  { id: 'claude-opus-4-8',  label: 'Claude Opus 4.8',   provider: 'anthropic', free: false },
 ]
 
 export const NODE_COLORS: Record<string, string> = {

@@ -13,9 +13,9 @@ const VIEW_META: Record<string, { label: string; emoji: string; color: string }>
 }
 
 export function TopBar() {
-  const { selectedModel, anthropicKey, openaiKey } = useSettingsStore()
+  const { selectedModel, anthropicKey, openaiKey, googleKey } = useSettingsStore()
   const { activeView } = useChatStore()
-  const hasKey = !!(anthropicKey || openaiKey)
+  const hasKey = !!(anthropicKey || openaiKey || googleKey)
   const meta = VIEW_META[activeView] || VIEW_META.chat
 
   return (
@@ -65,7 +65,11 @@ export function TopBar() {
           }}
         >
           <Cpu size={10} />
-          <span>{selectedModel.includes('gpt') ? 'GPT-4o Mini' : selectedModel.split('-').slice(0,3).join('-')}</span>
+          <span>
+            {selectedModel.includes('gemini') ? selectedModel.replace('gemini-','Gemini ') :
+             selectedModel.includes('gpt') ? selectedModel.toUpperCase() :
+             selectedModel.split('-').slice(0,3).join('-')}
+          </span>
         </motion.div>
 
         {/* Connection status */}

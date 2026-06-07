@@ -14,17 +14,31 @@ async def lifespan(app: FastAPI):
     setup_logging(settings.debug)
     logger.info("Starting Lumora backend...")
 
-    # 1. Initialize Azure OpenAI embedder
-    from src.rag.embedder import AzureEmbedder
-    try:
-        AzureEmbedder.init(
-            deployment=settings.azure_openai_emb_deployment,
-            endpoint=settings.azure_openai_emb_endpoint,
-            api_key=settings.azure_openai_emb_api_key,
-            api_version=settings.azure_openai_emb_api_version,
-        )
-    except Exception as e:
-        logger.warning(f"Azure embedder init failed: {e}")
+    # 1. Initialize embedder — Azure preferred, Gemini fallback
+    if settings.use_azure:
+        from src.rag.embedder import AzureEmbedder
+        try:
+            AzureEmbedder.init(
+                deployment=settings.azure_openai_emb_deployment,
+                endpoint=settings.azure_openai_emb_endpoint,
+                api_key=settings.azure_openai_emb_api_key,
+                api_version=settings.azure_openai_emb_api_version,
+            )
+            logger.info("Azure embedder initialized (1536-d)")
+        except Exception as e:
+            logger.warning(f"Azure embedder init failed: {e}")
+    elif settings.google_api_key:
+        from src.rag.embedder import GeminiEmbedder
+        try:
+            GeminiEmbedder.init(
+                api_key=settings.google_api_key,
+                model=settings.google_embedding_model,
+            )
+            # Update LanceDB dim for Gemini (768-d)
+            settings.__dict__['embedding_dim'] = 768
+            logger.info("Gemini embedder initialized (768-d)")
+        except Exception as e:
+            logger.warning(f"Gemini embedder init failed: {e}")
 
     # 2. Reranker — soft-load, fallback is built-in if unavailable
     from src.rag.reranker import BGEReranker

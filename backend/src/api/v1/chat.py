@@ -19,10 +19,12 @@ async def chat_stream(
     request: ChatRequest,
     x_anthropic_key: str = Header(default=""),
     x_openai_key: str = Header(default=""),
+    x_google_key: str = Header(default=""),
 ):
     settings = get_settings()
     anthropic_key = x_anthropic_key or settings.anthropic_api_key
     openai_key = x_openai_key or settings.openai_api_key
+    google_key = x_google_key or settings.google_api_key
 
     session_id = request.session_id or str(uuid.uuid4())
     if session_id not in _sessions:
@@ -47,7 +49,7 @@ async def chat_stream(
             yield f"event: agent_step\ndata: {json.dumps({'node': 'synthesize', 'message': 'Generating answer...'})}\n\n"
 
             # Step 2: LLM streaming
-            llm = get_llm_from_keys(anthropic_key, openai_key, streaming=True)
+            llm = get_llm_from_keys(anthropic_key, openai_key, google_key, streaming=True)
 
             context = rag_result.context
             history = _sessions[session_id][-10:]  # last 10 messages for context

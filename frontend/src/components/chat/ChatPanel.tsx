@@ -167,7 +167,7 @@ export function ChatPanel() {
     addUserMessage, addAssistantPlaceholder, appendStreamingDelta,
     finalizeStream, setAgentStep, createSession,
   } = useChatStore()
-  const { anthropicKey, openaiKey, backendUrl } = useSettingsStore()
+  const { anthropicKey, openaiKey, googleKey, backendUrl } = useSettingsStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
   const isStreaming = streamingMessageId !== null
@@ -197,6 +197,7 @@ export function ChatPanel() {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' }
       if (anthropicKey) headers['X-Anthropic-Key'] = anthropicKey
       if (openaiKey) headers['X-OpenAI-Key'] = openaiKey
+      if (googleKey) headers['X-Google-Key'] = googleKey
 
       const res = await fetch(`${base}/chat/stream`, {
         method: 'POST',

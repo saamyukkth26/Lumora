@@ -75,5 +75,59 @@ class AzureEmbedder:
         return await asyncio.to_thread(self.encode, texts)
 
 
+class GeminiEmbedder:
+    """
+    Singleton Google Gemini embedder (text-embedding-004, 768-d, free tier).
+    Used when GOOGLE_API_KEY is set and Azure is not configured.
+    """
+
+    _instance: ClassVar["GeminiEmbedder | None"] = None
+
+    def __init__(self, api_key: str, model: str = "models/text-embedding-004") -> None:
+        self.api_key = api_key
+        self.model = model
+        self._client = None
+        self.embedding_dim = 768
+
+    @classmethod
+    def get_instance(cls) -> "GeminiEmbedder":
+        if cls._instance is None:
+            raise RuntimeError("GeminiEmbedder not initialized. Call init() first.")
+        return cls._instance
+
+    @classmethod
+    def init(cls, api_key: str, model: str = "models/text-embedding-004") -> "GeminiEmbedder":
+        cls._instance = cls(api_key, model)
+        cls._instance.load()
+        return cls._instance
+
+    def load(self) -> None:
+        import google.generativeai as genai
+        genai.configure(api_key=self.api_key)
+        self._client = genai
+        logger.info(f"Gemini embedder ready: model={self.model}, dim=768")
+
+    @property
+    def is_loaded(self) -> bool:
+        return self._client is not None
+
+    def encode(self, texts: list[str]) -> list[EmbeddingResult]:
+        if not self._client:
+            raise RuntimeError("GeminiEmbedder not loaded.")
+        cleaned = [t.strip().replace("\n", " ") or "empty" for t in texts]
+        results = []
+        for text in cleaned:
+            response = self._client.embed_content(
+                model=self.model,
+                content=text,
+                task_type="retrieval_document",
+            )
+            results.append(EmbeddingResult(dense=response["embedding"], sparse={}))
+        return results
+
+    async def encode_async(self, texts: list[str]) -> list[EmbeddingResult]:
+        return await asyncio.to_thread(self.encode, texts)
+
+
 # Module-level alias so the rest of the codebase imports consistently
 BGEEmbedder = AzureEmbedder

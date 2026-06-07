@@ -72,12 +72,22 @@ function ApiKeyInput({ label, value, onChange, placeholder }: {
   )
 }
 
+const PROVIDER_COLORS: Record<string, string> = {
+  google:    '#10b981',
+  openai:    '#06b6d4',
+  anthropic: '#f59e0b',
+}
+
 export function SettingsPanel() {
-  const { anthropicKey, openaiKey, selectedModel, backendUrl, setAnthropicKey, setOpenaiKey, setSelectedModel, setBackendUrl } = useSettingsStore()
+  const {
+    anthropicKey, openaiKey, googleKey, selectedModel, backendUrl,
+    setAnthropicKey, setOpenaiKey, setGoogleKey, setSelectedModel, setBackendUrl,
+  } = useSettingsStore()
 
   return (
     <div className="h-full overflow-y-auto p-6">
       <div className="max-w-xl mx-auto space-y-6">
+
         {/* API Keys */}
         <section className="glass-card rounded-none p-5 space-y-5">
           <div className="flex items-center gap-2">
@@ -85,19 +95,43 @@ export function SettingsPanel() {
             <h3 className="text-sm font-semibold text-foreground">API Keys</h3>
           </div>
 
+          {/* Gemini — free, shown first */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-emerald-400">Google Gemini API Key</span>
+              <span
+                className="text-[10px] px-1.5 py-0.5 font-semibold uppercase tracking-wide"
+                style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981', border: '1px solid rgba(16,185,129,0.3)' }}
+              >
+                FREE
+              </span>
+            </div>
+            <ApiKeyInput
+              label=""
+              value={googleKey}
+              onChange={setGoogleKey}
+              placeholder="AIza..."
+            />
+            <p className="text-[11px] text-slate-500">
+              Get yours free at <span className="text-emerald-500">aistudio.google.com</span> — works for both chat and embeddings.
+            </p>
+          </div>
+
+          <div className="h-px" style={{ background: 'rgba(255,255,255,0.05)' }} />
+
           <ApiKeyInput
-            label="Anthropic API Key"
+            label="Anthropic API Key (optional)"
             value={anthropicKey}
             onChange={setAnthropicKey}
             placeholder="sk-ant-..."
           />
           <ApiKeyInput
-            label="OpenAI API Key (fallback)"
+            label="OpenAI API Key (optional)"
             value={openaiKey}
             onChange={setOpenaiKey}
             placeholder="sk-..."
           />
-          <p className="text-xs text-muted">Keys are stored locally in your browser and never sent to any server except the LLM provider.</p>
+          <p className="text-xs text-muted">Keys are stored locally in your browser only.</p>
         </section>
 
         {/* Model selection */}
@@ -107,23 +141,39 @@ export function SettingsPanel() {
             <h3 className="text-sm font-semibold text-foreground">Model</h3>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {MODELS.map((m) => (
-              <motion.button
-                key={m.id}
-                onClick={() => setSelectedModel(m.id)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={cn(
-                  'p-3 rounded-none text-left text-xs border transition-all',
-                  selectedModel === m.id
-                    ? 'bg-primary/10 border-primary/30 text-primary'
-                    : 'bg-surface-3 border-white/8 text-muted hover:border-white/15'
-                )}
-              >
-                <p className="font-medium">{m.label}</p>
-                <p className="opacity-60 mt-0.5 capitalize">{m.provider}</p>
-              </motion.button>
-            ))}
+            {MODELS.map((m) => {
+              const color = PROVIDER_COLORS[m.provider] || '#64748b'
+              const isSelected = selectedModel === m.id
+              return (
+                <motion.button
+                  key={m.id}
+                  onClick={() => setSelectedModel(m.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="p-3 rounded-none text-left text-xs border transition-all relative overflow-hidden"
+                  style={{
+                    background: isSelected ? `${color}12` : 'rgba(255,255,255,0.02)',
+                    border: isSelected ? `1px solid ${color}40` : '1px solid rgba(255,255,255,0.07)',
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="font-semibold" style={{ color: isSelected ? color : '#e2e8f0' }}>{m.label}</p>
+                    {m.free && (
+                      <span
+                        className="text-[9px] px-1 py-0.5 font-bold uppercase"
+                        style={{ background: 'rgba(16,185,129,0.15)', color: '#10b981' }}
+                      >
+                        FREE
+                      </span>
+                    )}
+                  </div>
+                  <p className="capitalize" style={{ color: isSelected ? `${color}99` : '#64748b' }}>{m.provider}</p>
+                  {isSelected && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: color }} />
+                  )}
+                </motion.button>
+              )
+            })}
           </div>
         </section>
 

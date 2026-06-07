@@ -17,6 +17,11 @@ class Settings(BaseSettings):
     azure_openai_emb_api_version: str = "2025-01-01-preview"
     azure_openai_emb_deployment: str = "text-embedding-ada-002"
 
+    # ── Google Gemini (free tier) ─────────────────────────
+    google_api_key: str = ""
+    google_gemini_model: str = "gemini-1.5-flash"
+    google_embedding_model: str = "models/text-embedding-004"
+
     # ── Fallback: direct OpenAI / Anthropic (optional) ───
     anthropic_api_key: str = ""
     openai_api_key: str = ""
@@ -47,9 +52,20 @@ class Settings(BaseSettings):
     app_version: str = "1.0.0"
     debug: bool = False
 
+    # ── Force provider override (set to "gemini", "azure", "openai", "anthropic") ──
+    force_provider: str = ""
+
     @property
     def use_azure(self) -> bool:
+        if self.force_provider:
+            return self.force_provider == "azure"
         return bool(self.azure_openai_api_key and self.azure_openai_endpoint)
+
+    @property
+    def use_gemini(self) -> bool:
+        if self.force_provider:
+            return self.force_provider == "gemini"
+        return bool(self.google_api_key) and not self.use_azure
 
 
 @lru_cache
